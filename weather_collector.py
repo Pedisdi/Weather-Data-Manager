@@ -7,19 +7,27 @@ class WeatherCollector:
         self.file_path = pathlib.Path(file_path)
         self.file_obj = None
         self.fields = []
-        self.records = []
+        self.records_list = []
+
+    @property
+    def records_dict(self):
+        self.file_obj.seek(0)
+        rows = []
+        for row in csv.DictReader(self.file_obj):
+            rows.append(row)
+        return rows
 
     @property
     def all_rows(self):
         rows = [self.fields]
-        rows.extend(self.records)
+        rows.extend(self.records_list)
         return rows
 
     def __enter__(self):
-        if self.file_path.exists():
+        if self.file_path.exists() and self.file_path.suffix == '.csv':
             self.file_obj = self.file_path.open("r")
             self.fields = self.__extract_fields()
-            self.records = self.__extract_records()
+            self.records_list = self.__extract_records()
             return self
         raise FileNotFoundError("File does not exit.")
 
@@ -42,6 +50,16 @@ class WeatherCollector:
             for column_number in column_numbers:
                 print(f"{row[column_number]:<15}", end='')
             print()
+
+    def max_value(self, field):
+        return max([float(row[field]) for row in self.records_dict])
+
+    def min_value(self, field):
+        return min([float(row[field]) for row in self.records_dict])
+
+    def average_value(self, field):
+        values = [float(row[field]) for row in self.records_dict]  # __shift+del (to delete a line directly)
+        return sum(values) / len(values)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.file_obj:
