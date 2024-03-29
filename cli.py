@@ -16,5 +16,5 @@ with WeatherCollector(args.file) as handler:
     elif args.operation[0] == 'average':
         print(handler.average_value(args.datatype[0]))
 
-    
+
 
