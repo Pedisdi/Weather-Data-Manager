@@ -11,6 +11,8 @@ def url():
         print(handler.records_list)
         print(handler.fields)
         print(handler.max_value(field=handler.fields[1]))
+        print(handler.last_record)
+        print(handler.compare_live_history())
 
 
 def file():
@@ -23,4 +25,4 @@ def file():
 
 if __name__ == '__main__':
     url()
-    file()
+    # file()
